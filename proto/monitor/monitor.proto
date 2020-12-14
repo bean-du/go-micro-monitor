@@ -1,0 +1,80 @@
+syntax = "proto3";
+package monitor;
+
+message Empty {
+}
+service Monitor {
+    // GC 一次 gc 操作
+    rpc GC (Empty) returns (Empty);
+    // StackStats
+    rpc Stack (Empty) returns (GoPsStackResponse);
+    // Stats 基本状态
+    rpc Stats (Empty) returns (GoPsStatsResponse);
+    // MemStats 查询内存状态
+    rpc MemStats (Empty) returns (GoPsMemStatsResponse);
+    // CpuProfiles CPU监控信息
+    rpc CpuProfiles (GoPsProfilesRequest) returns (GoPsProfilesResponse);
+    // HeapProfiles 内存监控信息
+    rpc HeapProfiles (Empty) returns (GoPsProfilesResponse);
+    // BinaryDump 二进制文件下载
+    rpc BinaryDump (Empty) returns (GoPsBinaryResponse);
+    // Trace 跟踪
+    rpc Trace (Empty) returns (GoPsProfilesResponse);
+}
+
+// GoPsMemStatsResponse 内存状态请求参数
+message GoPsMemStatsResponse {
+    string Alloc = 1;
+    string TotalAlloc = 2;
+    string Sys = 3;
+    int64 Lookups = 4;
+    int64 Mallocs = 5;
+    int64 Frees = 6;
+    string HeapAlloc = 7;
+    string HeapSys = 8;
+    string HeapIdle = 9;
+    string HeapInUse = 10;
+    string HeapReleased = 11;
+    int64 HeapObjects = 12;
+    string StackInUse = 13;
+    string StackSys = 14;
+    string StackMspanInuse = 15;
+    string StackMspanSys = 16;
+    string StackMcacheInuse = 17;
+    string StackMcacheSys = 18;
+    string OtherSys = 19;
+    string GcSys = 20;
+    string NextGc = 21;
+    string LastGc = 22;
+    int64 gcPauseTotal = 23;
+    int64 GcPause = 24;
+    int64 GcPauseEnd = 25;
+    int64 NumGc = 26;
+    int64 NumForcedGc = 27;
+    float GcCpuFraction = 28;
+    bool EnableGc = 29;
+    bool DebugGc = 30;
+}
+
+message GoPsStatsResponse {
+    int32 goroutines = 1;
+    int32 OSThreads = 2;
+    int32 GOMAXPROCS = 3;
+    int32 NumCPU = 4;
+}
+message GoPsStackResponse {
+    bytes content = 1;
+}
+
+// ProfilesRequest Profiles 请求参数
+message GoPsProfilesRequest {
+    int64 Duration = 1; // 监控CPU的时间
+}
+// ProfilesResponse Profiles 返回参数
+message GoPsProfilesResponse {
+    bytes Content = 1; // cpu profile 信息
+}
+
+message GoPsBinaryResponse {
+    bytes Content = 1;
+}
